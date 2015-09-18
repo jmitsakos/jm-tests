@@ -13,7 +13,8 @@
     </style>
 </head>
 <body>
-Latest 5 results:<br>
+
+<#if bydate??>Result for date: <#else>Latest 5 results:</#if><br>
 <table class="jm">
     <tr bgcolor="#d3d3d3">
         <td class="jm">#</td>
@@ -25,6 +26,18 @@ Latest 5 results:<br>
         <td class="jm">Joker</td>
         <td>Date</td>
     </tr>
+<#if bydate??>
+    <tr>
+        <td bgcolor="#7fffd4">${bydate.drawNum?string["0"]}</td>
+        <td bgcolor="#00ffff">${bydate.n1}</td>
+        <td bgcolor="#00ffff">${bydate.n2}</td>
+        <td bgcolor="#00ffff">${bydate.n3}</td>
+        <td bgcolor="#00ffff">${bydate.n4}</td>
+        <td bgcolor="#00ffff">${bydate.n5}</td>
+        <td bgcolor="#00ffff">${bydate.joker}</td>
+        <td bgcolor="#00ffff">${bydate.drawDate?string["dd/MM/yyyy"]}</td>
+    </tr>
+<#else>
 <#list latest as l>
     <tr>
         <td bgcolor="#7fffd4">${l.drawNum?string["0"]}</td>
@@ -38,5 +51,5 @@ Latest 5 results:<br>
     </tr>
 </#list>
 </table>
-
+</#if>
 </html>
