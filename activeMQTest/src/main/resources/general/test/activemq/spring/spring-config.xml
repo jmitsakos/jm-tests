@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+
+
+
+            http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+            http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd">
+
+    <amq:broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="true" dataDirectory="persistJM"/>
+
+    <!--&lt;!&ndash; Creates an ActiveMQ connection factory using the amq namespace &ndash;&gt;
+    <amq:connectionFactory id="amqConnectionFactory" brokerURL="tcp://127.0.0.1:61616" />-->
+
+    <!-- CachingConnectionFactory Definition, sessionCacheSize property is the number of sessions to cache -->
+    <bean id="jmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <!--<constructor-arg ref="amqConnectionFactory" />-->
+        <!--<property name="exceptionListener" ref="jmsExceptionListener" />-->
+        <property name="sessionCacheSize" value="10" />
+        <property name="targetConnectionFactory" ref="connectionFactory"/>
+    </bean>
+
+     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" p:brokerURL="tcp://127.0.0.1:61616"/>
+
+    <!-- Destinations in ActiveMQ -->
+    <bean id="emailDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="testJM" />
+    </bean>
+
+    <bean id="producer" class="general.test.activemq.spring.JmsMessageProducer"/>
+
+    <!-- JmsTemplate Definition -->
+    <bean id="producerTemplate" class="org.springframework.jms.core.JmsTemplate"
+        p:connectionFactory-ref="jmsConnectionFactory"
+        p:defaultDestination-ref="emailDestination" />
+
+    <!-- A POJO that implements the email JMS message listener -->
+    <bean id="emailMessageListener" class="general.test.activemq.spring.MessageReceiver" />
+
+    <!-- A POJO that implements the profile-sync JMS message listener -->
+    <!--<bean id="syncMessageListener" class="xe.goldengroup.core.service.impl.ProfileSyncMessageListenerServiceImpl" />-->
+
+    <!-- The Spring message listener container configuration -->
+    <jms:listener-container container-type="default" connection-factory="jmsConnectionFactory" acknowledge="auto" concurrency="10" >
+        <jms:listener destination="testJM" ref="emailMessageListener" method="onMessage" />
+        <!--<jms:listener destination="profileSyncDestination" ref="syncMessageListener" method="onMessage" />-->
+    </jms:listener-container>
+    <context:component-scan base-package="general/test/activemq/spring"/>
+
+</beans>

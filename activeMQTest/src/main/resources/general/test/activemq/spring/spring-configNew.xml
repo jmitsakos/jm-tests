@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+
+
+
+
+
+
+     http://www.springframework.org/schema/jms
+     http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+
+
+     http://www.springframework.org/schema/task
+     http://www.springframework.org/schema/task/spring-task-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+    <!--<amq:broker useJmx="false" persistent="false" dataDirectory="mqdata">
+        <amq:transportConnectors>
+            <amq:transportConnector uri="tcp://127.0.0.1:61616" />
+            &lt;!&ndash;<amq:transportConnector uri="tcp://192.168.10.180:61617" />&ndash;&gt;
+        </amq:transportConnectors>
+    </amq:broker>
+
+    &lt;!&ndash; Creates an ActiveMQ connection factory using the amq namespace &ndash;&gt;
+    &lt;!&ndash;<amq:connectionFactory id="amqConnectionFactory" brokerURL="tcp://192.168.10.180:61617" />&ndash;&gt;
+    <amq:connectionFactory id="amqConnectionFactory" brokerURL="tcp://127.0.0.1:61616" />
+
+    &lt;!&ndash; CachingConnectionFactory Definition, sessionCacheSize property is the number of sessions to cache &ndash;&gt;
+    <bean id="jmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+        &lt;!&ndash;<property name="exceptionListener" ref="jmsExceptionListener" />&ndash;&gt;
+        <property name="sessionCacheSize" value="10" />
+    </bean>
+
+    &lt;!&ndash; Destinations in ActiveMQ &ndash;&gt;
+    <bean id="emailDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        &lt;!&ndash;<constructor-arg value="Goldendeals.gr" />&ndash;&gt;
+        <constructor-arg value="queue.testJM" />
+    </bean>
+
+    &lt;!&ndash; JmsTemplate Definition &ndash;&gt;
+    &lt;!&ndash;<bean id="producerTemplate" class="org.springframework.jms.core.JmsTemplate"
+        p:connectionFactory-ref="jmsConnectionFactory"
+        p:defaultDestination-ref="emailDestination" />&ndash;&gt;
+
+    &lt;!&ndash; A POJO that implements the email JMS message listener &ndash;&gt;
+    <bean id="emailMessageListener" class="general.test.activemq.spring.MessageReceiver" />
+
+    &lt;!&ndash; The Spring message listener container configuration &ndash;&gt;
+    <jms:listener-container container-type="default" connection-factory="jmsConnectionFactory" acknowledge="auto" concurrency="10" >
+        <jms:listener destination="testJM" ref="emailMessageListener" method="onMessage" />
+    </jms:listener-container>-->
+
+     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" p:brokerURL="tcp://127.0.0.1:61616" />
+	  <!-- A POJO that implements the JMS message listener -->
+
+	 <bean id="simpleMessageListener" class="general.test.activemq.spring.MessageReceiver"/>
+    <jms:listener-container container-type="default" connection-factory="connectionFactory" acknowledge="auto">
+        <jms:listener destination="testJM" ref="simpleMessageListener" method="onMessage" />
+    </jms:listener-container>
+
+
+    <task:annotation-driven executor="executor"/>
+    <task:executor id="executor" pool-size="1" rejection-policy="CALLER_RUNS" queue-capacity="1"/>
+
+    <bean id="processor" class="general.test.activemq.spring.JmProcessor"/>
+    <bean id="worker" class="general.test.activemq.spring.JmWorker"/>
+
+    <context:component-scan base-package="general/test/activemq/spring"/>
+
+
+</beans>
