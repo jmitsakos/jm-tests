@@ -37,7 +37,7 @@
         <td bgcolor="#00ffff">${bydate.joker}</td>
         <td bgcolor="#00ffff">${bydate.drawDate?string["dd/MM/yyyy"]}</td>
     </tr>
-<#else>
+<#elseif latest??>
 <#list latest as l>
     <tr>
         <td bgcolor="#7fffd4">${l.drawNum?string["0"]}</td>
