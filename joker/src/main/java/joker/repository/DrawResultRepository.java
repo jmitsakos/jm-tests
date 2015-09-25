@@ -1,7 +1,6 @@
 package joker.repository;
 
 import joker.domain.DrawResult;
-import joker.dto.JNumber;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -38,7 +37,7 @@ public interface DrawResultRepository extends CrudRepository<DrawResult, Long> {
             "select n5 as n from draw_result" +
             ") as a" +
             " group by a.n order by lastOccurred, freq", nativeQuery = true)
-    List<JNumber> findNumbersByLeastRecent();
+    List<Object> findNumbersByLeastRecent();
 
     @Query(value = "select a.n as number, count(a.n) as freq,  (select max(d.draw_date) from draw_result d where a.n in (d.n1, d.n2, d.n3, d.n4, d.n5) ) as lastOccurred from " +
             "(" +
@@ -53,17 +52,17 @@ public interface DrawResultRepository extends CrudRepository<DrawResult, Long> {
             "select n5 as n from draw_result" +
             ") as a" +
             " group by a.n order by freq, lastOccurred", nativeQuery = true)
-    List<JNumber> findNumbersByLeastFrequent();
+    List<Object> findNumbersByLeastFrequent();
 
     @Query(value = "select joker as number, count(joker) as freq, (select max(d.draw_date) from draw_result d where number = d.joker ) as lastOccurred" +
             " from draw_result " +            
             " group by number order by lastOccurred, freq", nativeQuery = true)
-    List<JNumber> findJokersByLeastRecent();
+    List<Object> findJokersByLeastRecent();
 
     @Query(value = "select joker as number, count(joker) as freq, (select max(d.draw_date) from draw_result d where number = d.joker ) as lastOccurred" +
             " from draw_result " +
             " group by number order by freq, lastOccurred", nativeQuery = true)
-    List<JNumber> findJokersByLeastFrequent();
+    List<Object> findJokersByLeastFrequent();
 
 
 }

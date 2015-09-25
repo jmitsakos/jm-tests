@@ -23,9 +23,9 @@
                 <tr bgcolor="#d3d3d3"><td>Number</td><td>Frequency</td><td>Last time</td></tr>
             <#list infive as fn>
                 <tr>
-                    <td bgcolor="#7fffd4">${fn[0]}</td>
-                    <td bgcolor="#00ffff">${fn[1]}</td>
-                    <td bgcolor="#7fff00">${fn[2]?string["dd/MM/yyyy"]}</td>
+                    <td bgcolor="#7fffd4">${fn.number}</td>
+                    <td bgcolor="#00ffff">${fn.frequency}</td>
+                    <td bgcolor="#7fff00">${fn.drawDate?string["dd/MM/yyyy"]}</td>
                 </tr>
             </#list>
             </table>
@@ -36,9 +36,9 @@
                 <tr bgcolor="#d3d3d3"><td>Number</td><td>Frequency</td><td>Last time</td></tr>
             <#list joker as j>
                 <tr>
-                    <td bgcolor="#7fffd4">${j[0]}</td>
-                    <td bgcolor="#00ffff">${j[1]}</td>
-                    <td bgcolor="#7fff00">${j[2]?string["dd/MM/yyyy"]}</td>
+                    <td bgcolor="#7fffd4">${j.number}</td>
+                    <td bgcolor="#00ffff">${j.frequency}</td>
+                    <td bgcolor="#7fff00">${j.drawDate?string["dd/MM/yyyy"]}</td>
                 </tr>
             </#list>
             </table>
@@ -49,9 +49,9 @@
                 <tr bgcolor="#d3d3d3"><td>Number</td><td>Frequency</td><td>Last time</td></tr>
             <#list infivef as fn>
                 <tr>
-                    <td bgcolor="#7fffd4">${fn[0]}</td>
-                    <td bgcolor="#00ffff">${fn[1]}</td>
-                    <td bgcolor="#7fff00">${fn[2]?string["dd/MM/yyyy"]}</td>
+                    <td bgcolor="#7fffd4">${fn.number}</td>
+                    <td bgcolor="#00ffff">${fn.frequency}</td>
+                    <td bgcolor="#7fff00">${fn.drawDate?string["dd/MM/yyyy"]}</td>
                 </tr>
             </#list>
             </table>
@@ -62,13 +62,32 @@
                 <tr bgcolor="#d3d3d3"><td>Number</td><td>Frequency</td><td>Last time</td></tr>
             <#list jokerf as j>
                 <tr>
-                    <td bgcolor="#7fffd4">${j[0]}</td>
-                    <td bgcolor="#00ffff">${j[1]}</td>
-                    <td bgcolor="#7fff00">${j[2]?string["dd/MM/yyyy"]}</td>
+                    <td bgcolor="#7fffd4">${j.number}</td>
+                    <td bgcolor="#00ffff">${j.frequency}</td>
+                    <td bgcolor="#7fff00">${j.drawDate?string["dd/MM/yyyy"]}</td>
                 </tr>
             </#list>
             </table>
         </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td valign="top">
+            Suggested coupon:
+        </td>
+    </tr>
+    <tr>
+
+    <#assign i = 0>
+    <#list suggested as s>
+        <#assign i = i + 1>
+        <#if i == 6>
+            <td bgcolor="#7fffd4">${s}</td>
+        <#else>
+            <td bgcolor="#00ffff">${s},</td>
+        </#if>
+    </#list>
     </tr>
 </table>
 </body>

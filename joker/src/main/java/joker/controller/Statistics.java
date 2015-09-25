@@ -1,5 +1,6 @@
 package joker.controller;
 
+import joker.dto.JNumber;
 import joker.service.DrawResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 /**
  * User: imitsakos
@@ -26,10 +29,15 @@ public class Statistics {
 
     @RequestMapping("")
     public String init(Model model){
-        model.addAttribute("infive", drawResultService.getByLeastRecent(false));
-        model.addAttribute("joker", drawResultService.getByLeastRecent(true));
-        model.addAttribute("infivef", drawResultService.getByLeastFrequent(false));
-        model.addAttribute("jokerf", drawResultService.getByLeastFrequent(true));
+        List<JNumber> l1 = drawResultService.getByLeastRecent(false);
+        model.addAttribute("infive", l1);
+        List<JNumber> l2 = drawResultService.getByLeastRecent(true);
+        model.addAttribute("joker", l2);
+        List<JNumber> f1 = drawResultService.getByLeastFrequent(false);
+        model.addAttribute("infivef", f1);
+        List<JNumber> f2 = drawResultService.getByLeastFrequent(true);
+        model.addAttribute("jokerf", f2);
+        model.addAttribute("suggested", drawResultService.getSuggestedCoupon(l1, f1, l2, f2));
         return "statistics";
     }
 

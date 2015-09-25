@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -60,16 +61,25 @@ public class DrawResultService {
 
     public List<JNumber> getByLeastRecent(boolean joker){
         if(joker){
-            return drawResultRepository.findJokersByLeastRecent();
+            return transformData(drawResultRepository.findJokersByLeastRecent());
         }
-        return drawResultRepository.findNumbersByLeastRecent();
+        return transformData(drawResultRepository.findNumbersByLeastRecent());
     }
 
     public List<JNumber> getByLeastFrequent(boolean joker){
         if(joker){
-            return drawResultRepository.findJokersByLeastFrequent();
+            return transformData(drawResultRepository.findJokersByLeastFrequent());
         }
-        return drawResultRepository.findNumbersByLeastFrequent();
+        return transformData(drawResultRepository.findNumbersByLeastFrequent());
+    }
+
+    private List<JNumber> transformData(List<Object> l){
+        List<JNumber> finalList = new ArrayList<>(l.size());
+        for (Object o : l){
+            Object[] arr = (Object[]) o;
+            finalList.add(new JNumber((Integer)arr[0], ((BigInteger)arr[1]).intValue(), (Date)arr[2]));
+        }
+        return finalList;
     }
 
     private boolean validateJoker(Integer joker) {
@@ -148,5 +158,40 @@ public class DrawResultService {
         Collections.sort(finalList, Combination.COMPARE_BY_FREQ_DATE_DESC);
 
         return finalList;
+    }
+
+    public List<Integer> getSuggestedCoupon(List<JNumber> l1, List<JNumber> f1, List<JNumber> l2, List<JNumber> f2) {
+        List<Integer> suggested = new ArrayList<>(6);
+
+        int limit = 20;
+        for(int i=0; i< limit; i++){
+            if(suggested.size() == 5){
+                break;
+            }
+            int number = f1.get(i).getNumber();
+            for(int j=0; j< limit; j++){
+                if(l1.get(j).getNumber() == number){
+                    suggested.add(number);
+                    break;
+                }
+            }
+        }
+
+        Collections.sort(suggested);
+
+        for(int i=0; i< 10; i++){
+            if(suggested.size() == 6){
+                break;
+            }
+            int number = f2.get(i).getNumber();
+            for(int j=0; j< limit; j++){
+                if(l2.get(j).getNumber() == number){
+                    suggested.add(number);
+                    break;
+                }
+            }
+        }
+
+        return suggested;
     }
 }
