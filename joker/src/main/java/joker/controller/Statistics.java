@@ -27,17 +27,17 @@ public class Statistics {
     @Autowired
     private DrawResultService drawResultService;
 
-    @RequestMapping("")
-    public String init(Model model){
-        List<JNumber> l1 = drawResultService.getByLeastRecent(false);
-        model.addAttribute("infive", l1);
-        List<JNumber> l2 = drawResultService.getByLeastRecent(true);
-        model.addAttribute("joker", l2);
+    @RequestMapping("/{limitR}/{limitF}")
+    public String init(Model model, @PathVariable Integer limitR, @PathVariable Integer limitF){
+        List<JNumber> r1 = drawResultService.getByLeastRecent(false);
+        model.addAttribute("infive", r1);
+        List<JNumber> r2 = drawResultService.getByLeastRecent(true);
+        model.addAttribute("joker", r2);
         List<JNumber> f1 = drawResultService.getByLeastFrequent(false);
         model.addAttribute("infivef", f1);
         List<JNumber> f2 = drawResultService.getByLeastFrequent(true);
         model.addAttribute("jokerf", f2);
-        model.addAttribute("suggested", drawResultService.getSuggestedCoupon(l1, f1, l2, f2));
+        model.addAttribute("suggested", drawResultService.getSuggestedCoupon(r1, f1, r2, f2, limitR, limitF));
         return "statistics";
     }
 

@@ -160,32 +160,46 @@ public class DrawResultService {
         return finalList;
     }
 
-    public List<Integer> getSuggestedCoupon(List<JNumber> l1, List<JNumber> f1, List<JNumber> l2, List<JNumber> f2) {
+    public List<Integer> getSuggestedCoupon(List<JNumber> r1, List<JNumber> f1, List<JNumber> r2, List<JNumber> f2, Integer limitR, Integer limitF) {
         List<Integer> suggested = new ArrayList<>(6);
 
-        int limit = 20;
-        for(int i=0; i< limit; i++){
+        for(int i=0; i< limitF; i++){
             if(suggested.size() == 5){
                 break;
             }
-            int number = f1.get(i).getNumber();
-            for(int j=0; j< limit; j++){
-                if(l1.get(j).getNumber() == number){
-                    suggested.add(number);
+            int freqNumber = f1.get(i).getNumber();
+            for(int j=0; j< limitR; j++){
+                if(r1.get(j).getNumber() == freqNumber){
+                    suggested.add(freqNumber);
                     break;
                 }
             }
         }
 
+        if(suggested.size() < 5){
+            for(int i=0; i< limitR; i++){
+                if(suggested.size() == 5){
+                    break;
+                }
+                int number = r1.get(i).getNumber();
+                if(!suggested.contains(number)){
+                    suggested.add(number);
+                }
+            }
+            while (suggested.size() < 5){
+                suggested.add(-1);
+            }
+        }
+
         Collections.sort(suggested);
 
-        for(int i=0; i< 10; i++){
+        for(int i=0; i < 20; i++){
             if(suggested.size() == 6){
                 break;
             }
             int number = f2.get(i).getNumber();
-            for(int j=0; j< limit; j++){
-                if(l2.get(j).getNumber() == number){
+            for(int j=0; j < 20; j++){
+                if(r2.get(j).getNumber() == number){
                     suggested.add(number);
                     break;
                 }
